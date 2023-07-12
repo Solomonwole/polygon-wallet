@@ -1,10 +1,11 @@
 import { AppBar, Box, Button, IconButton, Toolbar } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import theme from "../../mui/theme";
 import { BasicModal } from "../../screens/home/HomePage";
+import PopModal from "../../modal/PopModal";
 
 function Header() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -41,7 +42,8 @@ function Header() {
         </AppBar>
       </Box>
 
-      <BasicModal open={open} setOpen={setOpen} />
+      {open && <PopModal open={open} close={setOpen} />}
+      {/* <BasicModal open={open} setOpen={setOpen} /> */}
     </>
   );
 }
