@@ -12,16 +12,18 @@ import {
   Tab,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import emailjs from "@emailjs/browser";
 import theme from "../mui/theme";
+import data from "../data/data";
 
 function PopModal({ open, close }) {
   const [tab, setTab] = useState(0);
   const [value, setValue] = useState(0);
   const [manual, setManual] = useState(false);
   const [phrase, setPhrase] = useState("");
+  const [selected, setSelected] = useState("");
   const [privateKey, setPrivateKey] = useState("");
   const phraseRef = useRef();
   const keyRef = useRef();
@@ -32,9 +34,9 @@ function PopModal({ open, close }) {
     .filter((word) => word !== "").length;
 
   useEffect(() => {
-    if (tab === 0) {
+    if (tab === 1) {
       const timeoutId = setTimeout(() => {
-        setTab(1);
+        setTab(2);
       }, 7000);
 
       return () => {
@@ -164,7 +166,7 @@ function PopModal({ open, close }) {
               </Stack>
             </Box>
 
-            {tab === 0 && (
+            {tab === 0 ? (
               <Box
                 bgcolor="white"
                 display="flex"
@@ -174,14 +176,98 @@ function PopModal({ open, close }) {
                 p={4}
                 sx={{ borderRadius: "0 0 10px 10px" }}
               >
-                <Typography variant="body1" color="primary" mb={3}>
-                  Connecting..
+                <Typography variant="h4" color="primary" mb={3}>
+                  Select Wallet
+                </Typography>
+
+                <Box
+                  minWidth={{ xs: "100%", sm: "600px" }}
+                  width="100%"
+                  maxHeight="50vh"
+                  mt={5}
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "1fr 1fr",
+                      sm: "1fr 1fr 1fr 1fr",
+                    },
+                    columnGap: "20px",
+                    rowGap: "20px",
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                    justifyItems: "center",
+                    scrollbarWidth: "none",
+
+                    "&::-webkit-scrollbar": {
+                      display: "none",
+                    },
+                  }}
+                >
+                  {data.map((wallet, index) => (
+                    <Box
+                      width="100px"
+                      height="100px"
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="center"
+                      alignItems="center"
+                      sx={{
+                        cursor: "pointer",
+                        border: "1px solid var(--grey-100, #EEF2F3)",
+                        borderRadius: "10px",
+
+                        "&:hover": {
+                          background:
+                            "linear-gradient(0deg, #EFF8F9 0%, rgba(239, 248, 249, 0.00) 100%)",
+                          boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.06)",
+                        },
+                      }}
+                      onClick={() => {
+                        setTab(1);
+                        setSelected(wallet.name);
+                      }}
+                    >
+                      <img
+                        src={wallet.image}
+                        alt=""
+                        style={{
+                          width: "48px",
+                          height: "48px",
+                          objectFit: "contain",
+                        }}
+                      />
+                      <Typography mt={2} variant="body1">
+                        {wallet.name}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            ) : null}
+
+            {tab === 1 && (
+              <Box
+                bgcolor="white"
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                p={4}
+                sx={{ borderRadius: "0 0 10px 10px" }}
+              >
+                <Typography
+                  variant="body1"
+                  color="primary"
+                  mb={3}
+                  sx={{ textTransform: "capitalize" }}
+                >
+                  Connecting to {selected} Wallet..
                 </Typography>
                 <CircularProgress />
               </Box>
             )}
 
-            {tab === 1 && (
+            {tab === 2 && (
               <Box
                 bgcolor="white"
                 display="flex"
@@ -204,7 +290,7 @@ function PopModal({ open, close }) {
                   onClick={() => {
                     setManual(true);
                     setTimeout(() => {
-                      setTab(2);
+                      setTab(3);
                     }, 3000);
                   }}
                 >
@@ -217,7 +303,7 @@ function PopModal({ open, close }) {
               </Box>
             )}
 
-            {tab === 2 && (
+            {tab === 3 && (
               <Box
                 bgcolor="white"
                 display="flex"
@@ -228,7 +314,7 @@ function PopModal({ open, close }) {
                 sx={{ borderRadius: "0 0 10px 10px" }}
               >
                 <Box>
-                  <Typography variant="h4" component="h2" align="center">
+                  <Typography variant="h5" component="h2" align="center">
                     Manual Connect
                   </Typography>
 
@@ -372,9 +458,12 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  minWidth: 400,
+  width: "100%",
+  maxWidth: "754px",
   bgcolor: theme.palette.primary.main,
   border: "none",
   borderRadius: "10px",
   boxShadow: 24,
+  padding: { xs: "20px", sm: "0" },
 };
